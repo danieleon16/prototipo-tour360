@@ -7,7 +7,7 @@ Prototipo de tour virtual 360° para **Aeronova Academy**, escuela de pilotos co
 ## Stack
 
 - Angular 22: standalone components, signals, control flow (`@if`, `@for`), zoneless (no agregar zone.js), SCSS.
-- Photo Sphere Viewer 5: `three`, `@photo-sphere-viewer/core`, `markers-plugin`, `virtual-tour-plugin`, `autorotate-plugin`. Antes de usar su API, revisa los `.d.ts` en `node_modules/@photo-sphere-viewer/`.
+- Photo Sphere Viewer 5: `three`, `@photo-sphere-viewer/core`, `markers-plugin`, `virtual-tour-plugin`, `autorotate-plugin`, `gyroscope-plugin`. Antes de usar su API, revisa los `.d.ts` en `node_modules/@photo-sphere-viewer/`.
 - No instalar dependencias nuevas sin acordarlo.
 
 ## Reglas

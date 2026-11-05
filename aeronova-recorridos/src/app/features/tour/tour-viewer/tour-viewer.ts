@@ -15,6 +15,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { AutorotatePlugin } from '@photo-sphere-viewer/autorotate-plugin';
 import { Viewer } from '@photo-sphere-viewer/core';
+import { GyroscopePlugin } from '@photo-sphere-viewer/gyroscope-plugin';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
 import { VirtualTourNode, VirtualTourPlugin } from '@photo-sphere-viewer/virtual-tour-plugin';
 
@@ -22,6 +23,7 @@ import { Escena, PuntoInfo } from '../../../core/models/tour.model';
 
 const RETRASO_AUTOROTACION_MS = 4000;
 const RETRASO_AUTOROTACION_PAUSADA_MS = Number.MAX_SAFE_INTEGER;
+const ESPERA_SENSOR_MS = 3000;
 const DURACION_TRANSICION_MS = 1200;
 const ZOOM_HORIZONTAL = 50;
 // En vertical, el zoom estándar deja una franja muy estrecha; se abre el campo de visión al máximo.
@@ -62,17 +64,61 @@ export class TourViewer implements OnDestroy {
   private readonly lienzo = viewChild.required<ElementRef<HTMLElement>>('lienzo');
   private viewer?: Viewer;
   private autorotacion?: AutorotatePlugin;
+  private giroscopio?: GyroscopePlugin;
+  private arrancandoGiroscopio = false;
+  private sensorConfirmado = false;
+  private readonly escuchasGlobales = new AbortController();
+
+  private readonly giroscopioSoportado = signal(false);
+  /** Lo que eligió la persona; el plugin se apaga por momentos al arrastrar o cambiar de escena. */
+  private readonly giroscopioElegido = signal(false);
+
+  readonly giroscopioDisponible = this.giroscopioSoportado.asReadonly();
+  readonly giroscopioActivo = this.giroscopioElegido.asReadonly();
 
   constructor() {
     afterNextRender(() => this.crearVisor());
 
-    effect(() => this.aplicarPausa(this.pausado()));
+    // Si la autorrotación arrancara con el giroscopio activo, lo apagaría.
+    effect(() => this.aplicarPausa(this.pausado() || this.giroscopioElegido()));
+    effect(() => this.sincronizarGiroscopio());
   }
 
   ngOnDestroy(): void {
+    this.escuchasGlobales.abort();
     this.viewer?.destroy();
     this.viewer = undefined;
     this.autorotacion = undefined;
+    this.giroscopio = undefined;
+  }
+
+  /** Devuelve `false` si el dispositivo no permitió activar el giroscopio. */
+  async alternarGiroscopio(): Promise<boolean> {
+    if (!this.giroscopio || this.arrancandoGiroscopio) {
+      return true;
+    }
+    if (this.giroscopioElegido()) {
+      this.giroscopioElegido.set(false);
+      this.giroscopio.stop();
+      return true;
+    }
+    // iOS solo pide permiso dentro del gesto de la persona: debe arrancar aquí, no desde un effect.
+    const giroscopio = this.giroscopio;
+    this.arrancandoGiroscopio = true;
+    try {
+      await giroscopio.start();
+      // Algunos navegadores anuncian soporte y conceden permiso aunque no haya un sensor real.
+      const hayDatos = await this.sensorEnviaDatos();
+      if (!hayDatos) {
+        giroscopio.stop();
+      }
+      this.giroscopioElegido.set(hayDatos);
+      return hayDatos;
+    } catch {
+      return false;
+    } finally {
+      this.arrancandoGiroscopio = false;
+    }
   }
 
   irAEscena(id: string): void {
@@ -83,6 +129,8 @@ export class TourViewer implements OnDestroy {
   }
 
   private crearVisor(): void {
+    // En calibración la imagen debe quedarse quieta; en pantallas sin tacto no hay giroscopio que ofrecer.
+    const conGiroscopio = !this.calibrando && matchMedia('(pointer: coarse)').matches;
     const viewer = new Viewer({
       container: this.lienzo().nativeElement,
       navbar: false,
@@ -126,7 +174,9 @@ export class TourViewer implements OnDestroy {
                 autostartOnIdle: true,
                 autorotateSpeed: '0.5rpm'
               })
-            ])
+            ]),
+        // El arrastre lo resuelven reanudarGiroscopio y sus escuchas, no el plugin.
+        ...(conGiroscopio ? [GyroscopePlugin.withConfig({ touchmove: false })] : [])
       ]
     });
     this.viewer = viewer;
@@ -135,9 +185,14 @@ export class TourViewer implements OnDestroy {
       this.autorotacion = viewer.getPlugin<AutorotatePlugin>(AutorotatePlugin);
     }
 
-    viewer
-      .getPlugin<VirtualTourPlugin>(VirtualTourPlugin)
-      .addEventListener('node-changed', ({ node }) => this.escenaCambio.emit(node.id));
+    if (conGiroscopio) {
+      this.prepararGiroscopio(viewer);
+    }
+
+    viewer.getPlugin<VirtualTourPlugin>(VirtualTourPlugin).addEventListener('node-changed', ({ node }) => {
+      this.escenaCambio.emit(node.id);
+      this.reanudarGiroscopio();
+    });
 
     viewer
       .getPlugin<MarkersPlugin>(MarkersPlugin)
@@ -152,6 +207,85 @@ export class TourViewer implements OnDestroy {
         console.log(texto);
       });
     }
+  }
+
+  private prepararGiroscopio(viewer: Viewer): void {
+    const giroscopio = viewer.getPlugin<GyroscopePlugin>(GyroscopePlugin);
+    this.giroscopio = giroscopio;
+
+    giroscopio
+      .isSupported()
+      .then((soportado) => this.giroscopioSoportado.set(soportado))
+      .catch(() => this.giroscopioSoportado.set(false));
+
+    // El visor apaga el plugin al arrastrar; se reanuda al soltar, desde donde quedó la vista.
+    const { signal: senal } = this.escuchasGlobales;
+    for (const evento of ['pointerup', 'pointercancel', 'touchend', 'touchcancel']) {
+      window.addEventListener(evento, () => this.reanudarGiroscopio(), {
+        capture: true,
+        signal: senal
+      });
+    }
+  }
+
+  private sensorEnviaDatos(): Promise<boolean> {
+    // El navegador solo avisa cuando la lectura cambia: con el celular quieto, reactivar no traería datos.
+    if (this.sensorConfirmado) {
+      return Promise.resolve(true);
+    }
+    return new Promise((resolve) => {
+      const escucha = new AbortController();
+      const terminar = (hayDatos: boolean) => {
+        escucha.abort();
+        clearTimeout(limite);
+        this.sensorConfirmado = hayDatos;
+        resolve(hayDatos);
+      };
+      const limite = setTimeout(() => terminar(false), ESPERA_SENSOR_MS);
+      window.addEventListener(
+        'deviceorientation',
+        (evento) => {
+          if (evento.alpha !== null) {
+            terminar(true);
+          }
+        },
+        { signal: escucha.signal }
+      );
+    });
+  }
+
+  private sincronizarGiroscopio(): void {
+    if (this.giroscopioElegido() && !this.pausado()) {
+      this.reanudarGiroscopio();
+    } else {
+      this.giroscopio?.stop();
+    }
+  }
+
+  /** Vuelve a encender el plugin si la persona lo eligió y nada lo impide en este momento. */
+  private reanudarGiroscopio(): void {
+    const { giroscopio, viewer } = this;
+    if (
+      !giroscopio ||
+      !viewer ||
+      this.arrancandoGiroscopio ||
+      giroscopio.isEnabled() ||
+      !this.giroscopioElegido() ||
+      this.pausado() ||
+      // Durante una transición de escena el visor debe poder llevar la vista a su posición inicial.
+      // Los tipos del visor no lo indican, pero esta promesa es null cuando no hay ninguna en curso.
+      viewer.state.loadingPromise !== null
+    ) {
+      return;
+    }
+
+    this.arrancandoGiroscopio = true;
+    giroscopio
+      .start()
+      .catch(() => this.giroscopioElegido.set(false))
+      .finally(() => {
+        this.arrancandoGiroscopio = false;
+      });
   }
 
   private escenaANodo(escena: Escena): VirtualTourNode {

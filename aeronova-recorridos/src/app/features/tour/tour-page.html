@@ -1,5 +1,9 @@
 @if (sede(); as sedeActual) {
-  <main class="tour" (pointerdown)="ocultarIndicacion()" (wheel)="ocultarIndicacion()">
+  <main
+    class="tour"
+    (pointerdown)="ocultarIndicacion(); avisoGiroscopio.set(false)"
+    (wheel)="ocultarIndicacion()"
+  >
     <!-- La clave por sede garantiza un visor nuevo, y el anterior destruido, si cambia la sede. -->
     @for (s of [sedeActual]; track s.id) {
       <app-tour-viewer
@@ -12,6 +16,18 @@
     }
 
     <header class="barra-superior">
+      <a class="volver" routerLink="/" aria-label="Volver al portal">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M15 5l-7 7 7 7"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </a>
       <a class="marca" routerLink="/">Aeronova Academy</a>
       <p class="ubicacion">
         <span>{{ sedeActual.nombre }}</span>
@@ -22,6 +38,26 @@
         Iniciar admisión
       </a>
     </header>
+
+    @if (giroscopioDisponible()) {
+      <button
+        type="button"
+        role="switch"
+        class="giroscopio"
+        [attr.aria-checked]="giroscopioActivo()"
+        (click)="alternarGiroscopio()"
+      >
+        Giroscopio
+        <span class="interruptor" aria-hidden="true"></span>
+      </button>
+    }
+
+    @if (avisoGiroscopio()) {
+      <p class="aviso-giroscopio" role="status">
+        No se pudo activar el giroscopio. Verifica que tu dispositivo tenga sensor de movimiento y
+        que el navegador tenga permiso para usarlo.
+      </p>
+    }
 
     @if (indicacionVisible()) {
       <p class="indicacion" role="status">Arrastra para mirar a tu alrededor</p>

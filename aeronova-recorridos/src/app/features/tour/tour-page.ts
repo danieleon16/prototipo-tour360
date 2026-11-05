@@ -46,6 +46,11 @@ export class TourPage implements OnDestroy {
   );
   protected readonly punto = signal<PuntoInfo | null>(null);
   protected readonly indicacionVisible = signal(true);
+  protected readonly giroscopioDisponible = computed(
+    () => this.visor()?.giroscopioDisponible() ?? false
+  );
+  protected readonly giroscopioActivo = computed(() => this.visor()?.giroscopioActivo() ?? false);
+  protected readonly avisoGiroscopio = signal(false);
 
   ngOnDestroy(): void {
     clearTimeout(this.temporizadorIndicacion);
@@ -57,5 +62,10 @@ export class TourPage implements OnDestroy {
 
   protected ocultarIndicacion(): void {
     this.indicacionVisible.set(false);
+  }
+
+  protected async alternarGiroscopio(): Promise<void> {
+    const permitido = await this.visor()?.alternarGiroscopio();
+    this.avisoGiroscopio.set(permitido === false);
   }
 }
