@@ -1,0 +1,14 @@
+<nav class="carrusel" aria-label="Escenas del recorrido">
+  @for (escena of escenas(); track escena.id) {
+    <button
+      type="button"
+      class="miniatura"
+      [class.miniatura--actual]="escena.id === escenaActualId()"
+      [attr.aria-current]="escena.id === escenaActualId() ? 'true' : null"
+      [style.background-image]="'url(' + escena.miniatura + ')'"
+      (click)="seleccion.emit(escena.id)"
+    >
+      <span class="nombre">{{ escena.nombre }}</span>
+    </button>
+  }
+</nav>

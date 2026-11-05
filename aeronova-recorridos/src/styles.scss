@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  color-scheme: dark;
+
+  --color-fondo: #0b0f14;
+  --color-superficie: #151b23;
+  --color-superficie-elevada: #1e2630;
+  --color-velo: rgba(11, 15, 20, 0.72);
+  --color-borde: rgba(255, 255, 255, 0.12);
+  --color-texto: #f2f5f8;
+  --color-texto-suave: #a9b4c0;
+  --color-acento: #3b82f6;
+  --color-acento-hover: #60a5fa;
+  --color-sobre-acento: #ffffff;
+
+  --radio-s: 0.5rem;
+  --radio-m: 0.875rem;
+  --radio-l: 1.25rem;
+  --radio-total: 999px;
+
+  --sombra-s: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --sombra-m: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+  --fuente: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--fuente);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p,
+ol,
+ul {
+  margin: 0;
+}
+
+ol,
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  color: inherit;
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-acento-hover);
+  outline-offset: 2px;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--radio-total);
+  background: transparent;
+  color: var(--color-texto);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.boton--primario {
+  background: var(--color-acento);
+  color: var(--color-sobre-acento);
+
+  &:hover {
+    background: var(--color-acento-hover);
+  }
+}
+
+.boton--secundario {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

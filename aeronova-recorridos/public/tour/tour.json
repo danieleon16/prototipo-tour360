@@ -1,0 +1,124 @@
+{
+  "sedes": [
+    {
+      "id": "flandes",
+      "nombre": "Flandes",
+      "ubicacion": "Aeropuerto Santiago Vila, Flandes",
+      "descripcion": "Recorre la llegada, el hangar, el taller y el aula de nuestra base en Flandes.",
+      "portada": "tour/escenas/01-llegada.jpg",
+      "disponible": true,
+      "escenaInicial": "llegada",
+      "escenas": [
+        {
+          "id": "llegada",
+          "nombre": "Llegada",
+          "panorama": "tour/escenas/01-llegada.jpg",
+          "miniatura": "tour/escenas/01-llegada.jpg",
+          "vistaInicial": { "yaw": 1.95, "pitch": 0.05 },
+          "enlaces": [
+            { "escenaId": "hangar", "yaw": 1.85, "pitch": 0.01 }
+          ],
+          "puntos": [
+            {
+              "id": "bienvenida",
+              "titulo": "Bienvenido a Aeronova Academy",
+              "yaw": 1.81,
+              "pitch": 0.19,
+              "texto": "Este es el punto de partida de tu recorrido por nuestra base en el Aeropuerto Santiago Vila. Muévete entre las escenas y descubre dónde te formarías como piloto, en una academia que cuenta con simuladores de vuelo de alta categoría."
+            }
+          ]
+        },
+        {
+          "id": "hangar",
+          "nombre": "Hangar",
+          "panorama": "tour/escenas/02-hangar.jpg",
+          "miniatura": "tour/escenas/02-hangar.jpg",
+          "vistaInicial": { "yaw": -0.98, "pitch": -0.02 },
+          "enlaces": [
+            { "escenaId": "llegada", "yaw": 0.82, "pitch": 0.03 },
+            { "escenaId": "taller", "yaw": 2, "pitch": -0.03 },
+            { "escenaId": "destino", "yaw": -0.73, "pitch": 0.14, "etiqueta": "Ver interior de la flota" }
+          ],
+          "puntos": [
+            {
+              "id": "flota",
+              "titulo": "Flota Cirrus de Aeronova",
+              "yaw": -1.05,
+              "pitch": 0.14,
+              "texto": "La formación se realiza en aeronaves Cirrus SR20 y SR22T, referentes en tecnología y sistemas de seguridad.",
+              "imagen": "tour/fichas/flota.jpg"
+            }
+          ]
+        },
+        {
+          "id": "taller",
+          "nombre": "Taller",
+          "panorama": "tour/escenas/03-taller.jpg",
+          "miniatura": "tour/escenas/03-taller.jpg",
+          "vistaInicial": { "yaw": 0.62, "pitch": -0.05 },
+          "enlaces": [
+            { "escenaId": "hangar", "yaw": 0.85, "pitch": 0.06 },
+            { "escenaId": "aula", "yaw": -0.51, "pitch": -0.05 }
+          ],
+          "puntos": [
+            {
+              "id": "mantenimiento",
+              "titulo": "Taller de mantenimiento propio",
+              "yaw": 0.38,
+              "pitch": -0.13,
+              "texto": "Aeronova Academy cuenta con su propio taller de mantenimiento. Aquí se cuida la flota con la que te formas."
+            }
+          ]
+        },
+        {
+          "id": "aula",
+          "nombre": "Aula",
+          "panorama": "tour/escenas/04-aula.jpg",
+          "miniatura": "tour/escenas/04-aula.jpg",
+          "vistaInicial": { "yaw": 0.6, "pitch": -0.15 },
+          "enlaces": [
+            { "escenaId": "taller", "yaw": 0.12, "pitch": 0.02 }
+          ],
+          "puntos": [
+            {
+              "id": "teoria",
+              "titulo": "Formación teórica",
+              "yaw": 0.91,
+              "pitch": -0.16,
+              "texto": "Aquí se desarrolla la parte teórica de tu formación como piloto. Es la base de lo que luego aplicas en la cabina."
+            }
+          ]
+        },
+        {
+          "id": "destino",
+          "nombre": "Tu destino",
+          "panorama": "tour/escenas/05-cabina.jpg",
+          "miniatura": "tour/escenas/05-cabina.jpg",
+          "vistaInicial": { "yaw": 1.53, "pitch": -0.1 },
+          "enlaces": [
+            { "escenaId": "aula", "yaw": -1.39, "pitch": 0.02 }
+          ],
+          "puntos": [
+            {
+              "id": "carrera",
+              "titulo": "Hacia dónde te lleva tu formación",
+              "yaw": 1.53,
+              "pitch": -0.01,
+              "texto": "Tu formación en Aeronova Academy es el primer paso hacia una carrera en la aviación, incluida la aviación comercial."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "guaymaral",
+      "nombre": "Guaymaral",
+      "ubicacion": "Aeropuerto de Guaymaral",
+      "descripcion": "Pronto podrás recorrer también nuestra sede en Guaymaral.",
+      "portada": "tour/escenas/01-llegada.jpg",
+      "disponible": false,
+      "escenaInicial": "",
+      "escenas": []
+    }
+  ]
+}

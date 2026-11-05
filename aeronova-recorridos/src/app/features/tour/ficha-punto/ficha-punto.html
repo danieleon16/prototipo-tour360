@@ -1,0 +1,23 @@
+<div class="fondo" (click)="cerrar.emit()"></div>
+
+<aside class="ficha" role="dialog" aria-modal="true" aria-labelledby="ficha-titulo">
+  <button #botonCerrar type="button" class="cerrar" aria-label="Cerrar" (click)="cerrar.emit()">
+    <span aria-hidden="true">×</span>
+  </button>
+
+  @if (imagen(); as src) {
+    <img class="imagen" [src]="src" alt="" (error)="marcarImagenFallida(src)" />
+  } @else if (cabecera(); as recorte) {
+    <div
+      class="imagen recorte"
+      [style.background-image]="recorte.imagen"
+      [style.background-size]="recorte.tamano"
+      [style.background-position]="recorte.posicion"
+    ></div>
+  }
+
+  <div class="contenido">
+    <h2 id="ficha-titulo">{{ punto().titulo }}</h2>
+    <p>{{ punto().texto }}</p>
+  </div>
+</aside>

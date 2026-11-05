@@ -1,0 +1,290 @@
+.hero {
+  --periodo: max(200dvh, 64rem);
+
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: max(100dvh, 32rem);
+  overflow: hidden;
+  background: var(--color-superficie);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(11, 15, 20, 0.45) 0%,
+      rgba(11, 15, 20, 0.2) 35%,
+      rgba(11, 15, 20, 0.92) 85%,
+      var(--color-fondo) 100%
+    );
+  }
+}
+
+/* Una imagen equirectangular empalma consigo misma, por eso el recorrido no tiene corte. */
+.hero-panorama {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: calc(var(--periodo) + 100vw);
+  background-repeat: repeat-x;
+  background-size: var(--periodo) 100%;
+  animation: panear 150s linear infinite;
+  will-change: transform;
+}
+
+@keyframes panear {
+  to {
+    transform: translateX(calc(-1 * var(--periodo)));
+  }
+}
+
+.hero-contenido {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 1.25rem 1.25rem calc(env(safe-area-inset-bottom) + 3rem);
+}
+
+.hero-marca {
+  margin-bottom: 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+h1 {
+  max-width: 14ch;
+  font-size: clamp(2.5rem, 11vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.hero-subtitulo {
+  max-width: 34rem;
+  margin-top: 1rem;
+  color: var(--color-texto-suave);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+}
+
+.hero-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.seccion {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 3rem 1.25rem;
+
+  h2 {
+    margin-bottom: 1.5rem;
+    font-size: clamp(1.5rem, 5vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+}
+
+.aviso {
+  color: var(--color-texto-suave);
+}
+
+.sedes {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.sede {
+  overflow: hidden;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-m);
+  background: var(--color-superficie);
+}
+
+.sede-portada {
+  position: relative;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  background-color: var(--color-superficie-elevada);
+}
+
+.sede-imagen {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+}
+
+.sede-proximamente {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+
+  svg {
+    width: 2.5rem;
+    height: 2.5rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+}
+
+.sede-cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: auto;
+  padding: 1.25rem;
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+}
+
+.sede-ubicacion {
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+.sede-descripcion {
+  margin-block: 0.75rem 1.25rem;
+  font-size: 0.9375rem;
+}
+
+.sede--inactiva {
+  .sede-imagen {
+    filter: blur(6px) brightness(0.4);
+    // Evita el borde claro que deja el desenfoque.
+    transform: scale(1.08);
+  }
+
+  h3,
+  .sede-ubicacion,
+  .sede-descripcion {
+    opacity: 0.55;
+  }
+}
+
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.375rem 1rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-total);
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.pasos {
+  display: grid;
+  gap: 1.25rem;
+}
+
+/* La línea entre pasos dibuja la ruta; cada número es un punto de esa ruta. */
+.paso {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-height: 2.5rem;
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 2.5rem;
+    left: calc(1.25rem - 1px);
+    width: 2px;
+    height: 1.25rem;
+    background: var(--color-acento);
+  }
+}
+
+.paso-numero {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid var(--color-acento);
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.paso-nombre {
+  font-weight: 500;
+}
+
+.pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 2rem 1.25rem calc(env(safe-area-inset-bottom) + 2rem);
+  border-top: 1px solid var(--color-borde);
+}
+
+.pie-marca {
+  font-weight: 700;
+}
+
+.pie-credito {
+  color: var(--color-texto-suave);
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 48rem) {
+  .sedes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sede {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sede-cuerpo {
+    flex: 1;
+  }
+
+  .sede-descripcion {
+    flex: 1;
+  }
+
+  .pasos {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .paso {
+    flex-direction: column;
+    align-items: flex-start;
+
+    &:not(:last-child)::after {
+      top: calc(1.25rem - 1px);
+      left: 2.5rem;
+      width: calc(100% - 2.5rem + 1rem);
+      height: 2px;
+    }
+  }
+}

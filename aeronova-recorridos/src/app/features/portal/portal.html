@@ -1,0 +1,81 @@
+<main>
+  <section class="hero">
+    <div class="hero-panorama" [style.background-image]="fondo(sedeDestacada()?.portada)"></div>
+
+    <div class="hero-contenido">
+      <p class="hero-marca">Aeronova Academy</p>
+      <h1>Vive Aeronova antes de llegar</h1>
+      <p class="hero-subtitulo">Recorre nuestras sedes y conoce la flota desde cualquier lugar.</p>
+      <div class="hero-acciones">
+        <a class="boton boton--primario" [routerLink]="['/tour', sedeDestacada()?.id ?? 'flandes']">
+          Explorar el tour
+        </a>
+        <a class="boton boton--secundario" [href]="whatsappUrl" target="_blank" rel="noopener">
+          Iniciar admisión
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="titulo-sedes">
+    <h2 id="titulo-sedes">Nuestras sedes</h2>
+
+    @if (errorDeCarga()) {
+      <p class="aviso">No se pudieron cargar las sedes. Recarga la página para intentarlo de nuevo.</p>
+    }
+
+    <ul class="sedes">
+      @for (sede of sedes(); track sede.id) {
+        <li class="sede" [class.sede--inactiva]="!sede.disponible">
+          <div class="sede-portada">
+            <div class="sede-imagen" [style.background-image]="fondo(sede.portada)"></div>
+            @if (!sede.disponible) {
+              <div class="sede-proximamente">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"
+                  />
+                  <circle cx="12" cy="13" r="3.5" />
+                </svg>
+                <span>Próximamente</span>
+              </div>
+            }
+          </div>
+          <div class="sede-cuerpo">
+            <h3>{{ sede.nombre }}</h3>
+            <p class="sede-ubicacion">{{ sede.ubicacion }}</p>
+            <p class="sede-descripcion">{{ sede.descripcion }}</p>
+            @if (sede.disponible) {
+              <a class="boton boton--primario" [routerLink]="['/tour', sede.id]">Recorrer sede</a>
+            } @else {
+              <span class="etiqueta">Recorrido en producción</span>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="seccion" aria-labelledby="titulo-camino">
+    <h2 id="titulo-camino">Así es tu camino a la cabina</h2>
+
+    <ol class="pasos">
+      @for (paso of pasos; track paso) {
+        <li class="paso">
+          <span class="paso-numero" aria-hidden="true">{{ $index + 1 }}</span>
+          <span class="paso-nombre">{{ paso }}</span>
+        </li>
+      }
+    </ol>
+  </section>
+</main>
+
+<footer class="pie">
+  <div>
+    <p class="pie-marca">Aeronova Academy</p>
+    <p class="pie-credito">Prototipo desarrollado por PockSite</p>
+  </div>
+  <a class="boton boton--primario" [href]="whatsappUrl" target="_blank" rel="noopener">
+    Iniciar admisión
+  </a>
+</footer>

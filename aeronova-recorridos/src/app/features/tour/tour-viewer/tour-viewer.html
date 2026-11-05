@@ -1,0 +1,7 @@
+<div #lienzo class="tv-lienzo"></div>
+
+@if (calibrando) {
+  <output class="tv-calibracion">
+    {{ coordenadas() ?? 'Calibración: haz clic en la imagen para ver yaw y pitch' }}
+  </output>
+}

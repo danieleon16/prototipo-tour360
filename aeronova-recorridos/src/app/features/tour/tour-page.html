@@ -1,0 +1,49 @@
+@if (sede(); as sedeActual) {
+  <main class="tour" (pointerdown)="ocultarIndicacion()" (wheel)="ocultarIndicacion()">
+    <!-- La clave por sede garantiza un visor nuevo, y el anterior destruido, si cambia la sede. -->
+    @for (s of [sedeActual]; track s.id) {
+      <app-tour-viewer
+        [escenas]="s.escenas"
+        [escenaInicial]="s.escenaInicial"
+        [pausado]="punto() !== null"
+        (escenaCambio)="escenaActualId.set($event)"
+        (puntoSeleccionado)="punto.set($event)"
+      />
+    }
+
+    <header class="barra-superior">
+      <a class="marca" routerLink="/">Aeronova Academy</a>
+      <p class="ubicacion">
+        <span>{{ sedeActual.nombre }}</span>
+        <span aria-hidden="true"> · </span>
+        <strong>{{ escenaActual()?.nombre }}</strong>
+      </p>
+      <a class="boton boton--primario admision" [href]="whatsappUrl" target="_blank" rel="noopener">
+        Iniciar admisión
+      </a>
+    </header>
+
+    @if (indicacionVisible()) {
+      <p class="indicacion" role="status">Arrastra para mirar a tu alrededor</p>
+    }
+
+    <div class="zona-inferior">
+      <p class="sello">
+        Escenas ilustrativas · El recorrido final se fotografía en las sedes de Aeronova Academy
+      </p>
+      <app-miniaturas-escenas
+        [escenas]="sedeActual.escenas"
+        [escenaActualId]="escenaActualId()"
+        (seleccion)="irAEscena($event)"
+      />
+    </div>
+
+    @if (punto(); as puntoActual) {
+      <app-ficha-punto
+        [punto]="puntoActual"
+        [imagenEscena]="escenaActual()?.panorama"
+        (cerrar)="punto.set(null)"
+      />
+    }
+  </main>
+}
