@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"for \\(const p of ['core','markers-plugin','virtual-tour-plugin','autorotate-plugin']\\) console.log\\(p, require\\('./node_modules/@photo-sphere-viewer/'+p+'/package.json'\\).version\\)\")",
+      "Bash(grep -n \"  setPanorama\\(path, options = {}\\) {\" -A75 core/index.module.js)",
+      "Bash(NG_PERSISTENT_BUILD_CACHE=0 npx ng build)",
+      "Bash(powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\Lenovo\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\3a234b5eab5b82a4\\\\f1ef93e7-41a5-40f9-879f-d52022f94536\\\\scratchpad\\\\generar-pruebas.ps1\" -Destino \"C:\\\\Users\\\\Lenovo\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\3a234b5eab5b82a4\\\\f1ef93e7-41a5-40f9-879f-d52022f94536\\\\scratchpad\\\\escenas\")",
+      "Bash(powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\Lenovo\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\3a234b5eab5b82a4\\\\f1ef93e7-41a5-40f9-879f-d52022f94536\\\\scratchpad\\\\cuadricula.ps1\" -Origen \"C:\\\\Users\\\\Lenovo\\\\Documents\\\\PockSite\\\\Prototipo tour virtual\\\\aeronova-recorridos\\\\public\\\\tour\\\\escenas\" -Destino \"C:\\\\Users\\\\Lenovo\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\3a234b5eab5b82a4\\\\f1ef93e7-41a5-40f9-879f-d52022f94536\\\\scratchpad\\\\cuadriculas\")",
+      "Bash(grep -n \"__getLinkPosition\\(node, link\\) {\" -A32 index.module.js)",
+      "Bash(git -C aeronova-recorridos status --short)",
+      "Bash(git -C aeronova-recorridos log --oneline -5)",
+      "Bash(git check-ignore *)",
+      "Bash(python -c \"import playwright; print\\('pw', playwright.__version__\\)\")",
+      "Bash(python -c \"import PIL; print\\('PIL', PIL.__version__\\)\")",
+      "Bash(npm ls *)",
+      "Bash(mkdir -p __TRACKED_VAR__/crops)",
+      "Bash(python -I - __TRACKED_VAR__/crops)"
+    ]
+  }
+}
